@@ -1,0 +1,354 @@
+1)
+идея в том, чтобы сделать логи в отдельном properties файле
+// log.properties
+mario.Navigation.main=Entry point
+mario.Navigation.main.severity=info
+
+// pom.xml
+<!-- skip -->
+<plugins>
+	<plugin>
+		<groupId>com.featurea</groupId>
+		<artifactId>logger</artifactId>
+		<version>1</version>
+		<configuration>
+			<file>src/main/resources/mario/log.properties</file>
+		</configuration>
+	</plugin>
+</plugins>
+<!-- skip -->
+
+2) идея про аспекты  
+идея в том, чтобы делать аспекты не через аннотации, а через RmlConfig
+// aspects.properties
+com.manning.junitbook.ch03.mastering.HamcrestTest.setUpList.start=mario.Aspects.setUpListStart
+com.manning.junitbook.ch03.mastering.HamcrestTest.setUpList.finish=mario.Aspects.setUpListFinish
+
+// mario/Aspects.java
+public class Aspects {
+	public void setUpListStart(){
+		System.out.println("setUpListStart");
+	}		
+	public void setUpListFinish(){
+		System.out.println("setUpListFinish");
+	}
+}
+
+3)
+одна из основных идей дизайна в том, чтобы каждый модуль кроме семплов и физики был меньше 3000 строчек кода,
+потому что на все, что меньше 3000 строчек кода, тесты можно не писать
+
+
+4)
+идея в том, что rml модуль больше, чем 3000 строчек кода, поэтому его надо разбить на два: rml и featurea-common-utils
+
+5)
+надо как-то сделать а этапе validate maven-билда проверку - если количество строчек кода больше 3000, то build fail
+
+6)
+#0
+идея в том, чтобы ввести новую концепцию "book". Букать можно repo. То есть трансформировать репозиторий во что-то, что можно прочитать без компилятора
+Это что-то наподобие javadoc. Но в javadoc делается упор на package'и, а букаем мы не пекеджи, а проджекты. То есть по сути более высокий уровень абстракции
+#1
+переименовать book в site
+
+7)
+заимплементить концепцию генерации java final class'а с константами из properties конфига
+
+8)
+поубирать пока копирайты
+
+9)
+переделать fnt формат в properties nature
+
+10)
+прикрутить запуск тестов на винде на андроид эмуляторе из gradle, 
+чтобы можно было тестировать даже opengl и audio
+
+Например, такие строчки запустят конкретные тесты на android эмуляторе:
+D:\workspace\featurea>gradle test opengl drawTexture -os=android
+D:\workspace\featurea>gradle test facebook login -os=android
+
+11)
+надо все геттеры сделать геттерами (Shape.top() -> Shape.getTop())
+
+12)
+избавится от вложенных классов и package модификаторов доступа
+
+13)
+переделать интерфейсы с константами в финальные классы
+
+14)
+пофиксать весь shit чтобы избавиться от всех комментариев в коде
+
+15)
+идея в том, что вместо того, чтобы рисовать квадратиками и стрелочками Gradle Dependency надо "поднимать" эту диаграму в процессе билда как site
+
+16)
+избавиться от статических блоков инициализации
+
+17)
+реализовать функционал Spriter на базе featurea-studio 
+Creating a walk animation in Spriter https://www.youtube.com/watch?v=NrgGhK48Joo
+Spriter on kickstarter https://www.kickstarter.com/projects/539087245/spriter
+
+18)
+идея в том, чтобы развести концептуально properties и RML файлы как primitive-only и объекты
+properties может ссылаться на RML, но это будет стринга из которой в рантайме надо будет руками получить Resource
+RML может ссылаться на properties посредством знака доллар '$', например
+// mario/file.properties
+x=5
+// mario/file.rml
+<A value="$mario/file/x"/>
+
+// то есть Colors я задаю в RML, а посредством properties файла генерю не обычный Resource а EnumResource
+// featurea/colors.rml
+<resources id="colors">
+	<Color id="black" value="#000000FF"/>
+	<Color id="white" value="#FFFFFFFF"/>
+</resources>
+
+// featurea/enums.properties
+# то есть я показываю Featurea Studio из какого Rml Resource подтянуть enum
+featurea.util.Color=featurea/colors 
+
+// на UI из конфига Featurea Studio покажет такое:
+KEY     |      VALUE
+color   |      black (#000000FF)
+		|	   white (#FFFFFFFF)
+
+19)
+#0
+надо добавить в generated resource код помимо value() -> getValue() еще и getInstance(String tag)
+// file: world.rml - здесь я инлайню Body.getValue()
+<World id="world">
+	<Body id="body1"/>
+	<Body id="body2"/>
+	<Body id="body3"/>
+	<Joint body1="body1[]" body2="body2[]"/>
+	<Joint body1="body2[]" body2="body3[]"/>
+</World>
+
+// неэквивалент предыдущему, 0 в индексе - значит взять из контекста уже существующий, а если нету, то сделать - такой convention
+<World id="world">
+	<Body id="body1"/>
+	<Body id="body2"/>
+	<Body id="body3"/>
+	<Joint body1="body1[0]" body2="body2[0]"/>
+	<Joint body1="body2[0]" body2="body3[0]"/>
+</World>
+
+// в индексе можно ставить String, а не только int
+<World id="world">
+	<Body id="body1"/>
+	<Body id="body2"/>
+	<Body id="body3"/>
+	<!-- body2[qwe] значит сделать новую переменную, не такую как уже существующий в RmlContext ресурс с id="body2" -->
+	<Joint body1="body1[0]" body2="body2[qwe]"/> 
+	<!-- body2[qwe] в джаве генерирует Body.getValue() -->
+	<Joint body1="body2[qwe]" body2="body320)[0]"/> 
+</World>
+
+// здесь я вместо local переменных использую global синглтоны (они глобальны в рамках Thread, или Application):
+<World id="world">
+	<Body id="body1"/>
+	<Body id="body2"/>
+	<Body id="body3"/>
+	<Joint body1="body1(asd)" body2="body2()"/> <!-- body1(asd) генерирует в джаве Body.getInstance("asd") -->
+	<Joint body1="body2()" body2="body3(asd)"/> <!-- body2() генерирует в джаве Body.getInstance(), что эквивалентно Body.getInstance("") -->
+</World>
+
+// разные случаи:
+// 1)
+<Joint body1="body1" body2="body2"/> <!-- такой RML код в джаве не сгенеирует промежуточные переменные, а заинлайнит Body.getValue() -->
+// 2) следующий RML код эквивалентен предыдущему
+<Joint body1="body1[]" body2="body2[]"/>
+// 3) синглтоны можно достать из API, а ресурсы - только изобъектной модели, полученной в процессе конструирования ресурса
+Body singleton = Body.getInstance("qwe"); // достаю синглтон из HashMap
+Body variable = World.getValue().body2; // достаю временную переменную из объектной модели в heap
+// то есть проблема с boliparte кодом решена для всех синглтонов, например, featurea.studio.config.AppendRmlTag, featurea.studio.config.AreaSuggestion и т. д.
+
+#1
+синглтон синтаксически оформлять как X[1] потому что в скобках только одно значение без запятых (валидно также X[])
+valueOf оформлять как X(1, 2, 3) потому что в скобках может быть от нуля до бесконечности значение 
+теги проставлять через знак решетки. то, что раньше было X[0] сейчас X#. Валидно также, например, X(1)#0. Не валидно X(1)#
+X() и X это одно и тоже. X()#12 и X#12 это одно и тоже
+Не валидно X[]#, X[1]#, X[sgjfd]#, 
+ - то есть решетка с квадратными скобками не используется, потому что хештег уже и так как бы есть внутри квадратных скобок
+Не валидно X()[], X[](), X(1)[], X[](1), X()[1], X[1]()
+ - то есть круглые скобки с квадратными скобками нельзя использовать - так как это два принципиально разных метода конструирования объекта
+Итого: квадратные скобки могут быть или пустые или с однм токено внутри. Комбинировать можно только круглые скобки с решеткой
+
+// X.java - показываю идею о том, что valueOf методов может быть сколько хочешь, но все со String арументами, 
+// а методов getInstance - только два: A.getInstance() и A.getInstance(hashCode), причем getInstance() эквивалентен getInstance("")
+public class X {
+
+	private int a;
+	private int b;
+	private int c;
+	
+	public X setA(int a){
+		this.a = a;
+		return this;
+	}
+	
+	public A getA(){
+		return a;
+	}
+	
+	public X setB(int b){
+		this.b = b;
+		return this;
+	}
+	
+	public B getB(){
+		return b;
+	}
+	
+	public X setC(int c){
+		this.c = c;
+		return this;
+	}
+	
+	public C getC(){
+		return c;
+	}
+
+	public X(){
+		// no op
+	}
+	
+	public static X valueOf(){
+		return new X();
+	}
+	
+	public static X valueOf(String a){
+		return new X().setA(Integer.valueOf(a));
+	}
+	
+	public static X valueOf(String a, String b){
+		return new X().setA(Integer.valueOf(a)).setB(Integer.valueOf(b));
+	}
+	
+	public static X valueOf(String a, String b, String с){
+		return new X().setA(Integer.valueOf(a)).setB(Integer.valueOf(b)).setC(Integer.valueOf(c));
+	}
+	
+	private final static Map<Thread, Map<String, X>> threadHashCodeInstances = new HashMap<>();
+	
+	public static X getInstance(){
+		return getInstance("");
+	}
+	
+	public static X getInstance(String hashCode){
+		Thread currentThread = Thread.currentThread(); // todo improve this: get root thread, not current
+		Map map = threadHashCodeInstances.get(currentThread);
+		if (map == null){
+			map = new HashMap<>();
+		}
+		X instance = map.get(hashCode);
+		if (instance == null){
+			instance = new X();
+			map.put(hashCode, instance)
+		}
+		threadHashCodeInstances.put(currentThread, map);
+		return instance;		
+	}
+
+}
+
+// Таким образом, если стоит задача использовать объект сервиса в RML файле я делаю так:
+<X service="mario.MarioService[]"/>
+
+// Всегда можно раскрыть shortcut в полную форму
+
+// 1)
+shortcut: 
+<Joint body1="wheel1#"/> <!-- get resource from RML context by id="wheel1" -->
+canonical: 
+<Joint>
+	<Body id="body1" link="wheel1#"/>
+</Joint>
+
+// 2)
+shortcut: 
+<Joint body1=""/> <=> <Joint body1="()"/> <!-- Body.valueOf() -->
+canonical: 
+<Joint>
+	<Body id="body1" value="()"/>
+</Joint>
+<=>
+<Joint>
+	<Body id="body1" value="Body()"/>
+</Joint>
+
+// 3)
+shortcut: 
+<Joint body1="wheel1()"/> 
+canonical: 
+<Joint>
+	<!-- внутри generated класса внутри static метода getValue() используем для создания объекта Body.valueOf() который в себе вызывает new Body() -->
+	<Body id="body1" link="wheel1" value="Body()"/>
+</Joint>
+<=>
+<Joint>
+	<Body id="body1" link="wheel1" value=""/>
+</Joint>
+
+// 4)
+shortcut: 
+<Joint body1="wheel1"/> <=> <Joint body1="wheel1()"/>
+canonical: 
+<Joint>
+	<Body id="body1" link="wheel1"/>
+</Joint>
+
+// 5) я могу достать синглтон через Java API, например, такой тест
+// file: asd.rml
+<A id="asd">
+	<D id="d" service="MarioService[]"/>
+</A>
+// file: Test.java (фрагмент)
+assert MarioService.getInstance() == Asd.getValue().getD().getService()
+
+Таким образом, getInstance() и valueOf() не генерятся, а пишутся ручками - генерится только getValue(), который внутри себя использует разные варианты valueOf(),
+но не использует вообще никогда конструктор напрямую
+- я пишу ручками valueOf, потому что непонятно, как его генерировать автоматически - там нетривиальная логика внутри, выкидывание exception'ов, и т. д.
+- я пишу ручками getInstance, потому что синглтон это не RML ресурс а просто java класс, у которого есть shortcut в виде тега в rml схеме
+
+И конечно, не забыть про возможность ссылаться на properties из RML
+
+// file: a.properties
+v=123
+// file: test.rml
+<X id="test" s="${a/v}"/>
+
+Фигурные скобочки ведь ни под что не заняты
+
+20)
+надо допилить механизм featurea.util.Resource.getValue() 
+сделать вместо этого
+featurea.util.Resource.getValue(String... args)
+Например,
+// file: gen/motorbike/res/Wheel.java
+package motorbike.res;
+public class Wheel extends Body {
+
+	// Было:
+	/*public static Wheel getValue(){
+		Body result = new Body();
+	}*/
+
+	// Стало:
+	public static Wheel getValue(String... args){
+		Body result = Body.valueOf(args);
+	}
+
+}
+
+21)
+https://github.com/dmitrykolesnikovich/ipscan
+отсюда надо украсть способ билдать приложение как .exe, .deb и AppBundle (то есть вместо executable jar - нативные launcher'ы)
+Посмотреть https://youtu.be/y8yKxmz6iDY?t=43m3s
+
+22)
