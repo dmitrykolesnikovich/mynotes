@@ -352,3 +352,6 @@ https://github.com/dmitrykolesnikovich/ipscan
 Посмотреть https://youtu.be/y8yKxmz6iDY?t=43m3s
 
 22)
+Сделать The Featurea Timer Project - вместо media. Оформить API в стиле cron.
+
+23)
