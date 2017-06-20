@@ -354,4 +354,36 @@ https://github.com/dmitrykolesnikovich/ipscan
 22)
 Сделать The Featurea Timer Project - вместо media. Оформить API в стиле cron.
 
-23)
+23) идея в том, чтобы дать RML схеме возможность определять какие атрибуты являются required.
+Это удобно, чтобы везде по дефолту пробрасывать, например X[0]
+То есть без этой фичи надо писать:
+<A x="X[0]">
+  <B x="X[0]"/>
+  <C x="X[0]"/>
+</A>
+С этой фичойможно опустить повторы:
+<A>
+  <B/>
+  <C/>
+</A>
+Как эту фичу заимплементить?
+Было:
+// rmlSchema.properties
+A.x=X:java.lang.Object
+B.x=X:java.lang.Object
+C.x=X:java.lang.Object
+Стало:
+// rmlSchema.properties
+A.x=X:java.lang.Object[0]
+B.x=X:java.lang.Object[0]
+C.x=X:java.lang.Object[0]
+
+Если надо чтобы по дефолту создавался новый объект везде, то нотация следующая
+A.x=X:java.lang.Object()
+B.x=X:java.lang.Object()
+C.x=X:java.lang.Object()
+
+А если надо чтобы по дефолту создавался новый объект с параметрами, то так:
+A.x=X:java.lang.Object(1)
+B.x=X:java.lang.Object(2)
+C.x=X:java.lang.Object(3)
