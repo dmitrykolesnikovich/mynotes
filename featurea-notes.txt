@@ -384,6 +384,6 @@ B.x=X:java.lang.Object()
 C.x=X:java.lang.Object()
 
 А если надо чтобы по дефолту создавался новый объект с параметрами, то так:
-A.x=X:java.lang.Object(1)
-B.x=X:java.lang.Object(2)
-C.x=X:java.lang.Object(3)
+A.x=X:java.lang.Object(1234)
+B.x=X:java.lang.Object(text)
+C.x=X:java.lang.Object(true)
