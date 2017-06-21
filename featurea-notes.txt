@@ -387,3 +387,42 @@ C.x=X:java.lang.Object()
 A.x=X:java.lang.Object(1234)
 B.x=X:java.lang.Object(text)
 C.x=X:java.lang.Object(true)
+
+24)
+хорошая идея все ноды инстанциировать не коструктором, а пустым valueOf()
+Animation.valueOf()
+Goomba.valueOf()
+так я срифмую RML специфику с желанием выделять пул нодов как я выделяю пул в батче под вертексы.
+// Goomba.java
+public class Goomba {
+	private static List<Goomba> pool = new ArrayList<>();
+	private Goomba(){
+		// no op
+	}	
+	public void removeSelf(){
+		super.removeSelf();
+		pool.add(this);
+	}
+	/*static API*/
+	public static Goomba valueOf(){
+		Goomba goomba = pool.remove(0);
+		goomba.reset();
+		return goomba;
+	}
+	public static void initPool(int capacity){
+		for(int i=0; i<capacity; i++){
+			pool.add(new Goomba());
+		}
+	}
+	
+}
+
+25)
+идняпро Layer.onDraw() заключаетсявтомчтобыитерироватьне по нодам а по батчам
+при этом, не по всем батчам а только по тем которые visible
+при двух visible батчах я не апдейтаю батчина visibility
+а при одном - если камера сдвинулась влево чекаю сатл ли видимым батч слеваот единственного видимого наданный момент,
+а при движениии вправо - правый.
+
+26)
+
