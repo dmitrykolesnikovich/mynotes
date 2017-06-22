@@ -446,3 +446,14 @@ Config config new Config(resources, "rmlSchema");
 есть смысл с ткаим подходом назвать класс RmlSchema как-нибудь RmlServiceProvider - чтобы не путать его со схемой
 
 28)
+на данный момент есть четыре способа использования Project из четырех модулей
+1) featurea-studio
+2) featurea-platform-desktop
+3) featurea-platform-android
+4) featurea-compiler
+
+идея в том, чтобы написать четыре юнит теста, которые будут демонстрировать в пяти строчках кода эти кейсы с целью
+продебажить разные варианты использования API, а также упростить API
+
+29)
+
