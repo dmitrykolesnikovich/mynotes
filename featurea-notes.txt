@@ -425,4 +425,24 @@ public class Goomba {
 а при движениии вправо - правый.
 
 26)
+вообще мне нравится идея про то что Resources это flat, а Project это tree. 
+Причем Resources не помнит про Projectдаже еслион из него билдается
+но проблема в том, что внутри Resources есть RmlSchema которая не independent, то есть ее надо каждый разапдейтать при апдейти других компонент Resources
+при этом, RmlSchema может находится в невалидном состоянии (если не было Resources.setProjectPackage() или Resources.withProject())
 
+27)
+#0
+я хочу чтобы RmlSchema была полностью приватным service provider'ом. то есть чтобы доступ кданным самой схемы был не 
+то есть поле Resources.rmlSchema и класс RmlSchema - это package visibility
+// java code
+resources.rmlSchema
+
+а
+
+// java code
+Config config new Config(resources, "rmlSchema");
+
+#1
+есть смысл с ткаим подходом назвать класс RmlSchema как-нибудь RmlServiceProvider - чтобы не путать его со схемой
+
+28)
