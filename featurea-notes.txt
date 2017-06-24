@@ -456,10 +456,13 @@ Config config new Config(resources, "rmlSchema");
 продебажить разные варианты использования API, а также упростить API
 
 29)
+#0
 надо добавить концепцию Recusively везде:
 	Resources.withProjectRecusively() - Resources.withProject()
 	Config.keySetRecursively() - Config.keySet
-	
+#1
+Recusively есть только у Resources, но не у Project, потому что Project всегда recursively
+
 30)
 идея в том, чтобы вместо project.propertiesгенерить внутри ProjectCodeCompilerTask класс Project, то есть
 
@@ -483,6 +486,45 @@ public class Project extends featurea.app.Project {
 }
 
 31)
+#0
+идея в том, что Project задается четырьмя способами:
+1. pom.xml
+2. *.rml
+3. build.gradle
+4. package -> arifact coordinates (version=LATEST, type=jar, package=groupId.artifactId)
 
+Resources resources = new Resources().setRepository(new MavenRepository()); 
 
+Project project = new Project().setFile("/projects/featurea/pom.xml"); // 1. читаю pom.xml и делаю inflate проекту
+Project project = new Project().setFile("/projects/featurea/test.rml"); // 2. сводится к 1. или 3.
+Project project = new Project().setFile("/projects/featurea/build.gradle"); // 3. читаю build.gradle и делаю inflate проекту
+Project project = new Project().setPackage("featurea.mario"); // 4. сводится к JarFile jarFile = repository.getArtifact(pakage.replaceAll("\\.", "/"));
+
+resources.withProject(project);
+
+#1
+если задан только package и у Resources не задан репозиторий, то будет ProjectNotFoundException
+
+#2
+надо реализовать MavenRepository без maven-core артифакта, на чистом RML
+
+#3
+внутри Project есть поля:
+	classpath
+	resourcesDirs
+	generatedFilesDir
+	screenId
+	package
+	file
 	
+#4
+	screenId надо вынести в конфиг, итого остаются:
+	
+	classpath
+	resourcesDirs
+	generatedFilesDir	
+	package
+	file
+
+32)
+
