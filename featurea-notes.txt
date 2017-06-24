@@ -426,7 +426,7 @@ public class Goomba {
 
 26)
 вообще мне нравится идея про то что Resources это flat, а Project это tree. 
-Причем Resources не помнит про Projectдаже еслион из него билдается
+Причем Resources не помнит про Project даже если он из него билдается
 но проблема в том, что внутри Resources есть RmlSchema которая не independent, то есть ее надо каждый разапдейтать при апдейти других компонент Resources
 при этом, RmlSchema может находится в невалидном состоянии (если не было Resources.setProjectPackage() или Resources.withProject())
 
@@ -456,4 +456,33 @@ Config config new Config(resources, "rmlSchema");
 продебажить разные варианты использования API, а также упростить API
 
 29)
+надо добавить концепцию Recusively везде:
+	Resources.withProjectRecusively() - Resources.withProject()
+	Config.keySetRecursively() - Config.keySet
+	
+30)
+идея в том, чтобы вместо project.propertiesгенерить внутри ProjectCodeCompilerTask класс Project, то есть
 
+Было:
+
+// file: mario/project.properties
+package=mario
+dependencies=featurea.platformer, featurea.compiler
+
+Стало:
+
+// file: Project.properties
+package mario;
+public class Project extends featurea.app.Project {
+
+	public Project(){
+		setPackage("mario");
+		setChildren(new featurea.platformer.Project()); // без featurea.compiler.Project()
+	}
+
+}
+
+31)
+
+
+	
