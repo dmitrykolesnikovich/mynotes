@@ -527,4 +527,46 @@ resources.withProject(project);
 	file
 
 32)
+Лекториум
+https://www.lektorium.tv/speaker/3849
 
+33) 
+Performance Optimization
+99% процентов оптимизации приложения - это исправление тупых ошибок
+поэтому перед чтением всех этих умных статей просто сделай работу так, как сам понимаешь
+
+https://www.ibm.com/developerworks/ru/library/j-java6perfmon
+http://openjdk.java.net/tools/svc/jconsole
+https://www.ibm.com/developerworks/ru/library/j-5things7
+
+34)
+Camel 
+Swagger
+Mockito
+Optional
+Spring Batch - Spring Batch in Action
+Gradle
+Groovy
+ANTLR
+keytool
+Java NIO
+javap
+quartz -
+zookeeper -
+tcp ip - https://en.wikipedia.org/wiki/Transmission_Control_Protocol,
+picocontainer - http://picocontainer.com
+Мутационное тестирование Pitest - http://pitest.org
+Sonarqube - https://www.sonarqube.org
+ASM - http://asm.ow2.org
+XText - framework for development of programming languages and domain-specific languages https://eclipse.org/Xtext
+Eclipse Modeling Framework http://www.vogella.com/tutorials/EclipseEMF/article.html
+ModelMapper - https://github.com/modelmapper/modelmapper
+CGLib - https://github.com/cglib/cglib
+Elastic - https://github.com/elastic
+Logback https://logback.qos.ch
+Logback MDC https://logback.qos.ch/manual/mdc.html
+Splunk https://www.splunk.com/
+Logmatic https://logmatic.io
+Cloud providers - AWS, openshift, jelastic
+Spock http://spockframework.org
+Performance Tutorials https://shipilev.net/#Performance-101
