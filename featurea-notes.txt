@@ -570,3 +570,30 @@ Logmatic https://logmatic.io
 Cloud providers - AWS, openshift, jelastic
 Spock http://spockframework.org
 Performance Tutorials https://shipilev.net/#Performance-101
+
+35)
+// 1)
+// file: navigation.rml
+// <Navigation id="navigation" link="Navigation[]"/> 
+// in java class there will be code:
+// Navigation var = Navigation.getInstance();
+
+// 2)
+// file: navigation.rml
+// <Navigation id="navigation" link="Navigation()"/> 
+// in java class there will be code:
+// Navigation var = Navigation.valueOf();
+
+// 3)
+// file: navigation.rml
+// <Navigation id="navigation" link="Navigation"/> 
+// in java class there will be code:
+// Navigation var = Navigation.valueOf();
+
+// 4)
+// file: navigation.rml
+// <Navigation id="navigation" link="()"/> 
+// in java class there will be code:
+// Navigation var = Navigation.valueOf();
+
+36)
